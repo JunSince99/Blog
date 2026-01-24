@@ -1,0 +1,48 @@
+---
+---
+<header>
+  <nav>
+    <a href="/" class="home-link">
+      <span class="blog-name">정석준의 블로그</span></span>
+    </a>
+  </nav>
+</header>
+
+<style>
+  header {
+    width: 100%;
+    padding: 80px 0 20px 0; /* 상단 여백을 대폭 늘려 여유 공간 확보 */
+    margin-bottom: 60px;
+    border-bottom: 1px solid #111; /* 본문과 분리되는 아주 미세한 하단 선 */
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .home-link {
+    text-decoration: none;
+    color: #ffffff;
+    transition: all 0.3s ease;
+  }
+
+  .home-link:hover {
+    opacity: 0.7;
+    transform: translateX(2px); /* 호버 시 아주 살짝 오른쪽으로 이동하는 디테일 */
+  }
+
+  .blog-name {
+    font-size: 1.8rem; /* 크기를 더 키워 존재감 부여 */
+    font-weight: 900;
+    letter-spacing: -2px; /* 자간을 더 강하게 조여서 단단한 느낌 */
+    display: flex;
+    align-items: center;
+  }
+
+  /* 점(.)에만 미세한 변화를 주어 포인트 */
+  .dot {
+    color: #444; /* 점만 살짝 어두운 회색으로 처리해 고급스러움 추가 */
+    margin-left: 1px;
+  }
+</style>

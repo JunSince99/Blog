@@ -1,0 +1,33 @@
+---
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="divider"></div>
+  <p>&copy; {year}</p>
+</footer>
+
+<style>
+  footer {
+    margin-top: 100px;
+    padding-bottom: 60px;
+    /* 내용을 중앙으로 정렬 */
+    text-align: center;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #1a1a1a;
+    margin-bottom: 30px;
+    /* 선의 너비를 조절하고 싶다면 아래 주석을 해제하세요 */
+    /* width: 100%; */
+  }
+
+  p {
+    font-size: 0.75rem;
+    color: #444;
+    letter-spacing: 0.5px;
+    margin: 0;
+    /* 글자 사이 간격을 살짝 벌려 더 깔끔하게 보이게 함 */
+    text-transform: uppercase;
+  }
+</style>

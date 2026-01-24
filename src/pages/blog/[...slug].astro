@@ -1,0 +1,49 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+interface Props { entry: CollectionEntry<'blog'>; }
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={entry.data.title}>
+  <article class="prose">
+    <div class="article-meta">
+      <a href={`/series/${entry.slug.split('/')[0]}`} class="series-link">
+        {entry.data.seriesTitle}
+      </a>
+      <span class="separator">/</span>
+      <span class="part-number">Part {entry.data.order}</span>
+    </div>
+
+    <h1>{entry.data.title}</h1>
+    
+    <div class="markdown-body">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose { padding-top: 20px; }
+  .article-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.85rem; }
+  .series-link { color: #888; text-decoration: none; border-bottom: 1px solid transparent; }
+  .series-link:hover { color: #fff; border-color: #fff; }
+  .separator { color: #333; }
+  .part-number { color: #555; font-weight: 600; }
+
+  h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 60px; letter-spacing: -1px; }
+
+  .markdown-body { line-height: 1.8; color: #bbb; font-size: 1.05rem; }
+  .markdown-body :global(h2) { color: #fff; margin: 60px 0 20px 0; font-size: 1.6rem; }
+  .markdown-body :global(p) { margin-bottom: 28px; }
+  .markdown-body :global(pre) { background: #0a0a0a !important; padding: 24px; border-radius: 12px; border: 1px solid #1a1a1a; margin: 40px 0; }
+</style>

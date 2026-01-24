@@ -1,17 +1,66 @@
 ---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
+// 1. 모든 글 가져오기
+const allPosts = await getCollection('blog');
+
+// 2. 모든 _series.json 파일 가져오기 (비동기)
+const seriesMetaFiles = import.meta.glob('/src/content/blog/*/_series.json', { eager: true });
+
+// 3. 시리즈 데이터 구성
+const seriesMap: Record<string, any> = {};
+
+// JSON 메타데이터 먼저 등록
+for (const path in seriesMetaFiles) {
+  const folderName = path.split('/')[4]; // 경로에서 폴더명 추출
+  const content = (seriesMetaFiles[path] as any).default;
+  
+  seriesMap[folderName] = {
+    ...content,
+    count: 0,
+    slug: folderName
+  };
+}
+
+// 각 시리즈에 속한 글 개수 카운트
+allPosts.forEach((post) => {
+  const folderName = post.slug.split('/')[0];
+  if (seriesMap[folderName]) {
+    seriesMap[folderName].count += 1;
+  }
+});
+
+const seriesList = Object.values(seriesMap);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Archive">
+  <main class="series-list">
+    {seriesList.map((series) => (
+      <a href={`/series/${series.slug}`} class="series-stack">
+        <div class="series-card">
+          <div class="series-info">
+            <span class="series-label">Series</span>
+            <span class="post-count">총 {series.count}개의 글</span>
+          </div>
+          <div class="series-title">{series.title}</div>
+          <div class="series-description">{series.description}</div>
+        </div>
+      </a>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .series-list { display: flex; flex-direction: column; gap: 35px; }
+  .series-stack { position: relative; text-decoration: none; color: inherit; display: block; }
+  .series-stack::before { content: ""; position: absolute; top: 6px; right: -6px; width: 100%; height: 100%; background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; z-index: 1; }
+  .series-stack::after { content: ""; position: absolute; top: 12px; right: -12px; width: 100%; height: 100%; background-color: #0d0d0d; border: 1px solid #222222; border-radius: 12px; z-index: 0; }
+  .series-card { position: relative; background-color: #121212; border: 1px solid #333333; border-radius: 12px; padding: 30px; z-index: 2; transition: transform 0.2s ease, border-color 0.2s ease; }
+  .series-stack:hover .series-card { transform: translate(-4px, -4px); border-color: #666666; }
+  .series-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .series-label { font-size: 0.7rem; font-weight: 700; color: #888888; text-transform: uppercase; }
+  .post-count { font-size: 0.8rem; color: #fff; background-color: #333; padding: 4px 10px; border-radius: 20px; }
+  .series-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
+  .series-description { font-size: 0.95rem; line-height: 1.7; color: #888888; }
+</style>
